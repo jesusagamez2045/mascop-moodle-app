@@ -1,13 +1,14 @@
 {
-    "app_id": "com.moodle.moodlemobile",
-    "appname": "Moodle Mobile",
-    "versioncode": 51000,
-    "versionname": "5.1.0",
+    "app_id": "com.mascop.moodlemobile",
+    "appname": "Mascop App",
+    "versioncode": "100",
+    "versionname": "1.0.0",
     "cache_update_frequency_usually": 420000,
     "cache_update_frequency_often": 1200000,
     "cache_update_frequency_sometimes": 3600000,
     "cache_update_frequency_rarely": 43200000,
-    "default_lang": "en",
+    "siteurl": "https://pruebasmascop.globalsnopek.com/",
+    "default_lang": "es",
     "languages": {
         "af": "Afrikaans",
         "ar": "العربية",
@@ -68,18 +69,7 @@
         "zh-tw": "正體中文"
     },
     "wsservice": "moodle_mobile_app",
-    "demo_sites": {
-        "student": {
-            "url": "https://school.moodledemo.net",
-            "username": "student",
-            "password": "moodle25"
-        },
-        "teacher": {
-            "url": "https://school.moodledemo.net",
-            "username": "teacher",
-            "password": "moodle25"
-        }
-    },
+    "demo_sites": "",
     "defaultZoomLevel": "none",
     "zoomlevels": {
         "none": 100,
@@ -87,7 +77,11 @@
         "high": 120
     },
     "customurlscheme": "moodlemobile",
-    "sites": [],
+    "sites": [
+        {
+            "url": "https://pruebasmascop.globalsnopek.com/"
+        }
+    ],
     "multisitesdisplay": "",
     "sitefindersettings": {},
     "onlyallowlistedsites": false,
@@ -101,7 +95,7 @@
     "showTopLogo": "hidden",
     "ioswebviewscheme": "moodleappfs",
     "appstores": {
-        "android": "com.moodle.moodlemobile",
+        "android": "com.mascop.moodlemobile",
         "ios": "id633359593"
     },
     "wsrequestqueuelimit": 10,
@@ -115,24 +109,13 @@
     "disableTokenFile": false,
     "iconsPrefixes": {
         "font-awesome": {
-            "brands": [
-                "fab"
-            ],
-            "regular": [
-                "far"
-            ],
-            "solid": [
-                "fa",
-                "fas"
-            ]
+            "brands": ["fab"],
+            "regular": ["far"],
+            "solid": ["fa", "fas"]
         },
         "moodle": {
-            "font-awesome": [
-                "fam"
-            ],
-            "moodle": [
-                "moodle"
-            ]
+            "font-awesome": ["fam"],
+            "moodle": ["moodle"]
         }
     },
     "clearIABSessionWhenAutoLogin": "android",
