@@ -1,0 +1,129 @@
+// (C) Copyright 2015 Moodle Pty Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+import { CoreSharedModule } from '@/core/shared.module';
+import { MyBadgesService } from '@addons/mybadges/services/mybadges.service';
+import { RankingUsersResponse } from '@addons/mybadges/types/types';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import Chart from 'chart.js/auto';
+
+@Component({
+    selector: 'page-addon-mybadges-detail',
+    templateUrl: 'user-ranking.page.html',
+    standalone: true,
+    imports: [CommonModule, CoreSharedModule, TranslateModule],
+})
+export default class AddonUserRankingPage implements OnInit {
+    myBadgesService = inject(MyBadgesService);
+    usersRanking: RankingUsersResponse | undefined;
+    startDate: string | undefined;
+    endDate: string | undefined;
+    category: string | undefined = '';
+    course: string | undefined = '';
+
+    categories = [
+        {
+            label: 'Filtrar por centro educativo',
+            value: '',
+        },
+    ];
+
+    courses = [
+        {
+            label: 'Todos los cursos',
+            value: '',
+        },
+    ];
+
+    chart: Chart | undefined;
+
+    async ngOnInit(): Promise<void> {
+        this.usersRanking = await this.myBadgesService.getRankingUser();
+
+        this.createChart();
+    }
+
+    async filterRanking(): Promise<void> {
+        const formattedStartDate = this.startDate
+            ? this.startDate.split('T')[0]
+            : '';
+
+        const formattedEndDate = this.endDate ? this.endDate.split('T')[0] : '';
+
+        this.usersRanking = await this.myBadgesService.getRankingUser(
+            this.category || '',
+            this.course || '',
+            formattedStartDate,
+            formattedEndDate
+        );
+
+        this.createChart();
+    }
+
+    createChart(): void {
+        if (this.chart) {
+            this.chart.destroy();
+        }
+
+        const labels =
+            this.usersRanking?.ranking.map((user) => user.nombre) || [];
+        const data =
+            this.usersRanking?.ranking.map((user) => user.medallas) || [];
+
+        this.chart = new Chart('rankingChart', {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Medallas',
+                        data: data,
+                        backgroundColor: '#3366CC',
+                    },
+                ],
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Podio de Estudiantes por Medallas',
+                        font: {
+                            weight: 'bold',
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Cantidad de Medallas',
+                            font: {
+                                style: 'italic',
+                            },
+                        },
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+}

@@ -34,6 +34,7 @@ import { AddonRemoteThemesModule } from './remotethemes/remotethemes.module';
 import { AddonReportModule } from './report/report.module';
 import { AddonStorageManagerModule } from './storagemanager/storagemanager.module';
 import { AddonUserProfileFieldModule } from './userprofilefield/userprofilefield.module';
+import { AddonMyBadgesModule } from './mybadges/mybadges.module';
 
 @NgModule({
     imports: [
@@ -41,6 +42,7 @@ import { AddonUserProfileFieldModule } from './userprofilefield/userprofilefield
         AddonBlockModule,
         AddonBlogModule,
         AddonCalendarModule,
+        AddonMyBadgesModule,
         AddonCompetencyModule,
         AddonCourseCompletionModule,
         AddonEnrolModule,

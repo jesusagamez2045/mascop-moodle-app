@@ -1,0 +1,125 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title
+            >{{ 'addon.mybadges.ranking.user.title' | translate }}</ion-title
+        >
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12">
+                <ion-item class="ion-text-wrap">
+                    <ion-select
+                        name="category"
+                        [(ngModel)]="category"
+                        interface="action-sheet"
+                        [cancelText]="'core.cancel' | translate"
+                        interfaceOptions="Centros Educativos"
+                    >
+                        <p class="item-heading" slot="label">
+                            Centro Educativo
+                        </p>
+                        <ion-select-option
+                            *ngFor="let categoryItem of categories"
+                            [value]="categoryItem.value"
+                        >
+                            {{categoryItem.label}}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12">
+                <ion-item class="ion-text-wrap">
+                    <ion-select
+                        name="course"
+                        [(ngModel)]="course"
+                        interface="action-sheet"
+                        [cancelText]="'core.cancel' | translate"
+                        interfaceOptions="Cursos"
+                    >
+                        <p class="item-heading" slot="label">Curso</p>
+                        <ion-select-option
+                            *ngFor="let courseItem of courses"
+                            [value]="courseItem.value"
+                        >
+                            {{courseItem.label}}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12">
+                <ion-item class="ion-text-wrap">
+                    <ion-label position="stacked">
+                        <label class="item-heading" for="timestart-button"
+                            >Fecha inicio</label
+                        >
+                    </ion-label>
+                    <ion-datetime-button
+                        datetime="timestart"
+                        id="timestart-button"
+                    >
+                        @if (!startDate) {
+                        <ion-icon name="calendar" slot="date-target" />
+                        }
+                    </ion-datetime-button>
+                    <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                            <ion-datetime
+                                id="timestart"
+                                [(ngModel)]="startDate"
+                                presentation="date"
+                                [showDefaultButtons]="true"
+                            >
+                                <span slot="title"
+                                    >{{'core.date' | translate}}</span
+                                >
+                            </ion-datetime>
+                        </ng-template>
+                    </ion-modal>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12">
+                <ion-item class="ion-text-wrap">
+                    <ion-label position="stacked">
+                        <label class="item-heading" for="timeend-button"
+                            >Fecha final</label
+                        >
+                    </ion-label>
+                    <ion-datetime-button datetime="timeend" id="timeend-button">
+                        @if (!endDate) {
+                        <ion-icon name="calendar" slot="date-target" />
+                        }
+                    </ion-datetime-button>
+                    <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                            <ion-datetime
+                                id="timeend"
+                                [(ngModel)]="endDate"
+                                presentation="date"
+                                [showDefaultButtons]="true"
+                            >
+                                <span slot="title"
+                                    >{{'core.date' | translate}}</span
+                                >
+                            </ion-datetime>
+                        </ng-template>
+                    </ion-modal>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row class="ion-padding-top">
+            <ion-col size="12" class="ion-text-end">
+                <ion-button (click)="filterRanking()"> Filtrar </ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <div style="height: 400px; overflow-x: auto">
+                    <canvas id="rankingChart"></canvas>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
