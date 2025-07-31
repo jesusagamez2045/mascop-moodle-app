@@ -30,7 +30,11 @@ import { CoreSites } from '@services/sites';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
+    CategoriesResponse,
+    Category,
     ChallengesResponse,
+    Course,
+    CoursesResponse,
     RankingCategoriesResponse,
     RankingUsersResponse,
     UserChallengesGroupedByCategory,
@@ -48,6 +52,8 @@ export class MyBadgesService {
     challenges: ChallengesResponse | undefined;
     rankingUsers: RankingUsersResponse | undefined;
     rankingCategories: RankingCategoriesResponse | undefined;
+    categories: Category[] = [];
+    courses: Course[] = [];
     constructor() {
         this.site = CoreSites.getRequiredCurrentSite();
         this.userId = this.site.getUserId();
@@ -154,5 +160,33 @@ export class MyBadgesService {
         );
 
         return this.rankingCategories;
+    }
+
+    async getCategories(): Promise<Category[]> {
+        const url = `${this.site.getURL()}/local/mascop_plugin/api/data_filter.php`;
+
+        const response = await firstValueFrom(
+            this.http.get<CategoriesResponse>(url)
+        );
+
+        this.categories = response.categories;
+
+        return this.categories;
+    }
+
+    async getCoursesByCategory(categoryid: string = ''): Promise<Course[]> {
+        const url = `${this.site.getURL()}/local/mascop_plugin/api/data_filter.php`;
+
+        const response = await firstValueFrom(
+            this.http.get<CoursesResponse>(url, {
+                params: {
+                    categoryid,
+                },
+            })
+        );
+
+        this.courses = response.courses;
+
+        return this.courses;
     }
 }

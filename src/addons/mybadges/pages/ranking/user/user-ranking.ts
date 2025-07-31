@@ -13,7 +13,11 @@
 // limitations under the License.
 import { CoreSharedModule } from '@/core/shared.module';
 import { MyBadgesService } from '@addons/mybadges/services/mybadges.service';
-import { RankingUsersResponse } from '@addons/mybadges/types/types';
+import {
+    Category,
+    Course,
+    RankingUsersResponse,
+} from '@addons/mybadges/types/types';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
@@ -33,27 +37,38 @@ export default class AddonUserRankingPage implements OnInit {
     endDate: string | undefined;
     category: string | undefined = '';
     course: string | undefined = '';
-
-    categories = [
-        {
-            label: 'Filtrar por centro educativo',
-            value: '',
-        },
-    ];
-
-    courses = [
-        {
-            label: 'Todos los cursos',
-            value: '',
-        },
-    ];
+    categories: Category[] = [];
+    courses: Course[] = [];
 
     chart: Chart | undefined;
 
     async ngOnInit(): Promise<void> {
+        this.getCategories();
         this.usersRanking = await this.myBadgesService.getRankingUser();
 
         this.createChart();
+    }
+
+    async getCategories(): Promise<void> {
+        this.categories = await this.myBadgesService.getCategories();
+    }
+
+    async getCoursesByCategory(): Promise<void> {
+        if (!this.category) {
+            this.courses = [];
+
+            return;
+        }
+
+        this.courses = await this.myBadgesService.getCoursesByCategory(
+            this.category
+        );
+    }
+
+    async onChangeCategory(): Promise<void> {
+        this.course = undefined;
+        this.courses = [];
+        await this.getCoursesByCategory();
     }
 
     async filterRanking(): Promise<void> {

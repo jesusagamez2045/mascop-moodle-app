@@ -89,3 +89,21 @@ export type RankingCategory = {
 export type RankingCategoriesResponse = {
     ranking: RankingCategory[];
 };
+
+export type Category = {
+    id: string;
+    name: string;
+};
+
+export type CategoriesResponse = {
+    categories: Category[];
+};
+
+export type Course = {
+    id: string;
+    fullname: string;
+};
+
+export type CoursesResponse = {
+    courses: Course[];
+};

@@ -18,15 +18,16 @@
                         interface="action-sheet"
                         [cancelText]="'core.cancel' | translate"
                         interfaceOptions="Centros Educativos"
+                        (ionChange)="onChangeCategory()"
                     >
                         <p class="item-heading" slot="label">
                             Centro Educativo
                         </p>
                         <ion-select-option
                             *ngFor="let categoryItem of categories"
-                            [value]="categoryItem.value"
+                            [value]="categoryItem.id"
                         >
-                            {{categoryItem.label}}
+                            {{categoryItem.name}}
                         </ion-select-option>
                     </ion-select>
                 </ion-item>
@@ -43,9 +44,9 @@
                         <p class="item-heading" slot="label">Curso</p>
                         <ion-select-option
                             *ngFor="let courseItem of courses"
-                            [value]="courseItem.value"
+                            [value]="courseItem.id"
                         >
-                            {{courseItem.label}}
+                            {{courseItem.fullname}}
                         </ion-select-option>
                     </ion-select>
                 </ion-item>

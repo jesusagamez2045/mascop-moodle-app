@@ -13,7 +13,11 @@
 // limitations under the License.
 import { CoreSharedModule } from '@/core/shared.module';
 import { MyBadgesService } from '@addons/mybadges/services/mybadges.service';
-import { RankingCategoriesResponse } from '@addons/mybadges/types/types';
+import {
+    Category,
+    Course,
+    RankingCategoriesResponse,
+} from '@addons/mybadges/types/types';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,32 +32,43 @@ import Chart from 'chart.js/auto';
 export default class AddonCategoryRankingPage implements OnInit {
     myBadgesService = inject(MyBadgesService);
     categoriesRanking: RankingCategoriesResponse | undefined;
+    categories: Category[] = [];
+    courses: Course[] = [];
     startDate: string | undefined;
     endDate: string | undefined;
     category: string | undefined = '';
     course: string | undefined = '';
 
-    categories = [
-        {
-            label: 'Filtrar por centro educativo',
-            value: '',
-        },
-    ];
-
-    courses = [
-        {
-            label: 'Todos los cursos',
-            value: '',
-        },
-    ];
-
     chart: Chart | undefined;
 
     async ngOnInit(): Promise<void> {
+        this.getCategories();
         this.categoriesRanking =
             await this.myBadgesService.getRankingCategories();
 
         this.createChart();
+    }
+
+    async getCategories(): Promise<void> {
+        this.categories = await this.myBadgesService.getCategories();
+    }
+
+    async getCoursesByCategory(): Promise<void> {
+        if (!this.category) {
+            this.courses = [];
+
+            return;
+        }
+
+        this.courses = await this.myBadgesService.getCoursesByCategory(
+            this.category
+        );
+    }
+
+    async onChangeCategory(): Promise<void> {
+        this.course = undefined;
+        this.courses = [];
+        await this.getCoursesByCategory();
     }
 
     async filterRanking(): Promise<void> {
