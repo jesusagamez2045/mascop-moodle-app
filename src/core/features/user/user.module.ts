@@ -35,6 +35,7 @@ import { CoreScreen } from '@services/screen';
 import { CoreEvents } from '@singletons/events';
 import { CORE_COURSE_PAGE_NAME, CORE_COURSE_INDEX_PATH } from '@features/course/constants';
 import { PARTICIPANTS_PAGE_NAME } from './constants';
+import { CoreUserParticipantsLinkHandler } from './services/handlers/participants-link';
 
 /**
  * Get user services.
@@ -46,7 +47,7 @@ export async function getUsersServices(): Promise<Type<unknown>[]> {
     const { CoreUserHelperProvider } = await import('@features/user/services/user-helper');
     const { CoreUserDelegateService } = await import('@features/user/services/user-delegate');
     const { CoreUserProfileFieldDelegateService } = await import('@features/user/services/user-profile-field-delegate');
-    const { CoreUserOfflineProvider } = await import('@features/user/services/user-offline');
+    const { CoreUserPreferencesService } = await import('@features/user/services/user-preferences');
     const { CoreUserSyncProvider } = await import('@features/user/services/user-sync');
 
     return [
@@ -54,7 +55,7 @@ export async function getUsersServices(): Promise<Type<unknown>[]> {
         CoreUserHelperProvider,
         CoreUserDelegateService,
         CoreUserProfileFieldDelegateService,
-        CoreUserOfflineProvider,
+        CoreUserPreferencesService,
         CoreUserSyncProvider,
     ];
 }
@@ -141,6 +142,7 @@ const courseIndexRoutes: Routes = [
         provideAppInitializer(() => {
             CoreUserDelegate.registerHandler(CoreUserProfileMailHandler.instance);
             CoreContentLinksDelegate.registerHandler(CoreUserProfileLinkHandler.instance);
+            CoreContentLinksDelegate.registerHandler(CoreUserParticipantsLinkHandler.instance);
             CoreCronDelegate.register(CoreUserSyncCronHandler.instance);
             CoreTagAreaDelegate.registerHandler(CoreUserTagAreaHandler.instance);
             CoreCourseOptionsDelegate.registerHandler(CoreUserCourseOptionHandler.instance);

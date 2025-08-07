@@ -987,6 +987,15 @@ export class CoreCourseHelperProvider {
      * @returns Promise resolved when done.
      */
     async getAndOpenCourse(courseId: number, params?: Params, siteId?: string): Promise<void> {
+        siteId = siteId ?? CoreSites.getCurrentSiteId();
+
+        // Do not navigate if the course is already being displayed.
+        if (siteId === CoreSites.getCurrentSiteId() && CoreCourse.currentViewIsCourse(courseId)) {
+            CoreCourse.selectCourseTab(params?.selectedTab, params);
+
+            return;
+        }
+
         const modal = await CoreLoadings.show();
 
         let course: CoreCourseAnyCourseData | { id: number };
@@ -1115,21 +1124,40 @@ export class CoreCourseHelperProvider {
      * @param module The module.
      * @param siteId Site ID. If not defined, current site.
      * @returns Promise resolved when done.
+     * @deprecated since 5.1. Use loadOfflineCompletionData instead.
      */
     async loadModuleOfflineCompletion(courseId: number, module: CoreCourseModuleData, siteId?: string): Promise<void> {
-        if (!module.completiondata) {
+        module.completiondata = await this.loadOfflineCompletionData(module.id, module.completiondata, siteId);
+    }
+
+    /**
+     * Given a completion info, load the offline completion any and return the completion with the offline data added.
+     *
+     * @param cmId The module ID.
+     * @param completiondata The completion data.
+     * @param siteId Site ID. If not defined, current site.
+     * @returns Completion data with offline info added if there's any.
+     */
+    async loadOfflineCompletionData(
+        cmId: number,
+        completiondata?: CoreCourseModuleCompletionData,
+        siteId?: string,
+    ): Promise<CoreCourseModuleCompletionData | undefined> {
+        if (!completiondata) {
             return;
         }
 
-        const offlineCompletions = await CoreCourseOffline.getCourseManualCompletions(courseId, siteId);
+        const offlineCompletion = await CorePromiseUtils.ignoreErrors(CoreCourseOffline.getManualCompletion(cmId, siteId));
 
-        const offlineCompletion = offlineCompletions.find(completion => completion.cmid == module.id);
-
-        if (offlineCompletion && offlineCompletion.timecompleted >= module.completiondata.timecompleted * 1000) {
-            // The module has offline completion. Load it.
-            module.completiondata.state = offlineCompletion.completed;
-            module.completiondata.offline = true;
+        if (offlineCompletion && offlineCompletion.timecompleted >= completiondata.timecompleted * 1000) {
+            return {
+                ...completiondata,
+                state: offlineCompletion.completed,
+                offline: true,
+            };
         }
+
+        return completiondata;
     }
 
     /**
@@ -1473,7 +1501,7 @@ export class CoreCourseHelperProvider {
                 modNavOptions: options.modNavOptions,
             };
 
-            if (courseId == site.getSiteHomeId()) {
+            if (courseId === site.getSiteHomeId()) {
                 // Check if site home is available.
                 const isAvailable = await CoreSiteHome.isAvailable();
 
